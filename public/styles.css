@@ -381,6 +381,7 @@ dd {
 }
 
 .log-entry {
+  display: block;
   min-width: 0;
   padding: 1px 0;
 }
@@ -389,27 +390,39 @@ dd {
   margin-top: 2px;
 }
 
-.source-supervisor {
+.log-time {
+  color: #94a3b8;
+}
+
+.log-source {
+  font-weight: 800;
+}
+
+.log-message {
+  color: #dbeafe;
+}
+
+.source-supervisor .log-source {
   color: #60a5fa;
 }
 
-.source-cloudflared {
+.source-cloudflared .log-source {
   color: #34d399;
 }
 
-.source-heartbeat {
+.source-heartbeat .log-source {
   color: #fbbf24;
 }
 
-.level-ok {
-  color: #d1fadf;
+.level-ok .log-message {
+  color: #bbf7d0;
 }
 
-.level-warn {
+.level-warn .log-message {
   color: #fde68a;
 }
 
-.level-error {
+.level-error .log-message {
   color: #fb7185;
 }
 

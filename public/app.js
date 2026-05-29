@@ -108,7 +108,20 @@ function paintLogs() {
   logsEl.replaceChildren(...localLogs.map((entry) => {
     const row = document.createElement('div');
     row.className = `log-entry ${sourceClass(entry.source)} ${severityClass(entry.line)}`;
-    row.textContent = `[${formatLogTime(entry.ts)}] ${entry.source || 'unknown'}: ${entry.line}`;
+
+    const time = document.createElement('span');
+    time.className = 'log-time';
+    time.textContent = `[${formatLogTime(entry.ts)}]`;
+
+    const source = document.createElement('span');
+    source.className = 'log-source';
+    source.textContent = entry.source || 'unknown';
+
+    const message = document.createElement('span');
+    message.className = 'log-message';
+    message.textContent = entry.line;
+
+    row.append(time, ' ', source, ': ', message);
     return row;
   }));
   logsEl.scrollTop = logsEl.scrollHeight;
