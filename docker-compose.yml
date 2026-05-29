@@ -1,0 +1,36 @@
+services:
+  tunnel-panel:
+    image: ghcr.io/zipenok/cloudflare-tunnel-docker:latest
+    container_name: cloudflare-tunnel-panel
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      # Panel
+      PANEL_PORT: "18088"
+      # PANEL_AUTH_TOKEN: "change-this-password"
+
+      # Cloudflare Tunnel bootstrap. You can leave TUNNEL_TOKEN empty
+      # and set it later from the web panel.
+      TUNNEL_TOKEN: ""
+      TUNNEL_PROTOCOL: "auto" # auto, quic, http2
+
+      # Optional external probe. Example:
+      # ORIGIN_PROBE_URL: "https://tunnel.example.com/health"
+      ORIGIN_PROBE_URL: ""
+      ORIGIN_ACCEPT_STATUS_CODES: "200-299"
+
+      # Heartbeat / reconnect policy
+      HEARTBEAT_INTERVAL_MS: "60000"
+      HEARTBEAT_TIMEOUT_MS: "10000"
+      RESTART_FAILURE_THRESHOLD: "3"
+      RESTART_COOLDOWN_MS: "120000"
+
+      # Advanced cloudflared args
+      CLOUDFLARED_ARGS: ""
+      CLOUDFLARED_POST_ARGS: ""
+
+      # Alternative local-config mode if you do not use TUNNEL_TOKEN
+      TUNNEL_NAME: ""
+      TUNNEL_CONFIG: ""
+    volumes:
+      - ./data:/data

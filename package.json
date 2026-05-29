@@ -1,0 +1,14 @@
+{
+  "name": "cloudflare-tunnel-panel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dockerized Cloudflare Tunnel supervisor with a live web panel, heartbeat checks, and automatic reconnects.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "check": "node --check src/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
