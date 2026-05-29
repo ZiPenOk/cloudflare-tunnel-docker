@@ -107,21 +107,8 @@ function filterVisibleLogs(entries) {
 function paintLogs() {
   logsEl.replaceChildren(...localLogs.map((entry) => {
     const row = document.createElement('div');
-    row.className = `log-row ${sourceClass(entry.source)} ${severityClass(entry.line)}`;
-
-    const time = document.createElement('span');
-    time.className = 'log-time';
-    time.textContent = formatLogTime(entry.ts);
-
-    const source = document.createElement('span');
-    source.className = 'log-source';
-    source.textContent = entry.source;
-
-    const line = document.createElement('span');
-    line.className = 'log-line';
-    line.textContent = entry.line;
-
-    row.append(time, source, line);
+    row.className = `log-entry ${sourceClass(entry.source)} ${severityClass(entry.line)}`;
+    row.textContent = `[${formatLogTime(entry.ts)}] ${entry.source || 'unknown'}: ${entry.line}`;
     return row;
   }));
   logsEl.scrollTop = logsEl.scrollHeight;

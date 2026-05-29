@@ -376,62 +376,40 @@ dd {
   font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
   font-size: 13px;
   line-height: 1.6;
-}
-
-.log-row {
-  display: grid;
-  grid-template-columns: 86px 104px minmax(0, 1fr);
-  gap: 10px;
-  padding: 7px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.025);
-}
-
-.log-row + .log-row {
-  margin-top: 3px;
-}
-
-.log-time {
-  color: #7b8797;
-}
-
-.log-source {
-  font-weight: 900;
-}
-
-.log-line {
-  min-width: 0;
+  white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-.source-supervisor .log-source {
+.log-entry {
+  min-width: 0;
+  padding: 1px 0;
+}
+
+.log-entry + .log-entry {
+  margin-top: 2px;
+}
+
+.source-supervisor {
   color: #60a5fa;
 }
 
-.source-cloudflared .log-source {
+.source-cloudflared {
   color: #34d399;
 }
 
-.source-heartbeat .log-source {
+.source-heartbeat {
   color: #fbbf24;
 }
 
-.level-ok .log-line {
+.level-ok {
   color: #d1fadf;
 }
 
-.level-warn .log-line {
+.level-warn {
   color: #fde68a;
 }
 
 .level-error {
-  border-color: rgba(251, 113, 133, 0.22);
-  background: rgba(127, 29, 29, 0.18);
-}
-
-.level-error .log-source,
-.level-error .log-line {
   color: #fb7185;
 }
 
