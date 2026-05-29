@@ -13,6 +13,20 @@
 - `/health` 轻量健康检查
 - 配置持久化到 `/data/panel-config.json`
 
+## 界面预览
+
+### 登录界面
+
+![登录界面](docs/screenshots/login.png)
+
+### 后台界面
+
+![后台界面](docs/screenshots/dashboard.png)
+
+### 设置界面
+
+![设置界面](docs/screenshots/settings.png)
+
 ## GitHub Container Registry 部署
 
 创建目录：
