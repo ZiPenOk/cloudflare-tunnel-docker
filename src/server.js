@@ -62,6 +62,7 @@ let stoppingForRestart = false;
 let manualStop = false;
 let heartbeatTimer = null;
 let reconnectTimer = null;
+let suppressHeartbeatUntil = 0;
 
 function toInt(value, fallback) {
   const parsed = Number.parseInt(value, 10);
@@ -395,6 +396,7 @@ function appendProcessLog(source, chunk) {
 
 function handleCloudflaredSignal(line) {
   if (/Registered tunnel connection|connection .*registered/i.test(line)) {
+    suppressHeartbeatUntil = 0;
     const protocol = line.match(/protocol=([^\s]+)/i)?.[1];
     const location = line.match(/location=([^\s]+)/i)?.[1];
     const details = [protocol, location].filter(Boolean).join(', ');
@@ -438,6 +440,7 @@ function restartTunnel(reason = 'manual restart') {
   state.lastRestartAt = now();
   stoppingForRestart = true;
   manualStop = false;
+  suppressHeartbeatUntil = Date.now() + Math.max(10000, runtimeConfig.heartbeatTimeoutMs * 2);
   setState({ phase: 'restarting', message: `Restarting: ${reason}` });
   addLog('supervisor', `Restarting cloudflared: ${reason}`);
   if (cloudflared) {
@@ -481,6 +484,17 @@ async function heartbeat() {
       originOk: runtimeConfig.originProbeUrl ? false : null,
       message: stoppedMessage
     });
+    return;
+  }
+
+  if (Date.now() < suppressHeartbeatUntil) {
+    if (state.phase !== 'restarting') {
+      setState({
+        phase: 'restarting',
+        consecutiveFailures: 0,
+        message: 'Restarting: waiting for cloudflared to reconnect'
+      });
+    }
     return;
   }
 

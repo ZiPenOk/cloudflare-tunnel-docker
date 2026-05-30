@@ -346,6 +346,32 @@ body[data-phase="misconfigured"] .dot {
   border-bottom: 0;
 }
 
+.connection-options {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  padding: 10px 0 0 !important;
+  border-bottom: 0 !important;
+}
+
+.connection-options > div {
+  display: block !important;
+  min-width: 0;
+  padding: 10px 12px !important;
+  border: 1px solid rgba(220, 228, 239, 0.78) !important;
+  border-radius: 8px;
+  background: rgba(248, 251, 255, 0.78);
+}
+
+.connection-options dt {
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.connection-options dd {
+  font-weight: 900;
+}
+
 dt {
   color: var(--muted);
   font-weight: 900;
