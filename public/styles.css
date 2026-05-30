@@ -334,7 +334,8 @@ body[data-phase="misconfigured"] .dot {
   margin: 0;
 }
 
-.facts div {
+.facts > div:not(.connection-options),
+.connection-options > div {
   display: grid;
   grid-template-columns: 128px minmax(0, 1fr);
   gap: 12px;
@@ -342,34 +343,18 @@ body[data-phase="misconfigured"] .dot {
   border-bottom: 1px solid rgba(220, 228, 239, 0.72);
 }
 
-.facts div:last-child {
+.facts > div:not(.connection-options):last-child {
   border-bottom: 0;
 }
 
 .connection-options {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 8px !important;
-  padding: 10px 0 0 !important;
-  border-bottom: 0 !important;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
 }
 
-.connection-options > div {
-  display: block !important;
-  min-width: 0;
-  padding: 10px 12px !important;
-  border: 1px solid rgba(220, 228, 239, 0.78) !important;
-  border-radius: 8px;
-  background: rgba(248, 251, 255, 0.78);
-}
-
-.connection-options dt {
-  margin-bottom: 4px;
-  font-size: 12px;
-}
-
-.connection-options dd {
-  font-weight: 900;
+.connection-options > div:nth-last-child(-n + 2) {
+  border-bottom: 0;
 }
 
 dt {
@@ -588,8 +573,17 @@ dd {
     max-height: 90vh;
   }
 
-  .facts div {
+  .connection-options {
+    grid-template-columns: 1fr;
+  }
+
+  .facts > div:not(.connection-options),
+  .connection-options > div {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+
+  .connection-options > div:nth-last-child(2) {
+    border-bottom: 1px solid rgba(220, 228, 239, 0.72);
   }
 }
