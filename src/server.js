@@ -25,6 +25,9 @@ const staticConfig = {
   envOriginProbeUrl: env.ORIGIN_PROBE_URL || '',
   envOriginAcceptStatusCodes: env.ORIGIN_ACCEPT_STATUS_CODES || '200-299',
   envProtocol: env.TUNNEL_PROTOCOL || 'auto',
+  envEdgeIpVersion: env.TUNNEL_EDGE_IP_VERSION || env.EDGE_IP_VERSION || 'auto',
+  envNoTlsVerify: toBool(env.NO_TLS_VERIFY || env.TUNNEL_NO_TLS_VERIFY || env.ORIGIN_NO_TLS_VERIFY, false),
+  envHaConnections: toInt(env.TUNNEL_HA_CONNECTIONS || env.HA_CONNECTIONS, 4),
   envHeartbeatIntervalMs: toInt(env.HEARTBEAT_INTERVAL_MS, 10000),
   envHeartbeatTimeoutMs: toInt(env.HEARTBEAT_TIMEOUT_MS, 5000),
   envRestartFailureThreshold: toInt(env.RESTART_FAILURE_THRESHOLD, 3),
@@ -71,6 +74,14 @@ function clampInt(value, fallback, min, max) {
   return Math.min(Math.max(parsed, min), max);
 }
 
+function toBool(value, fallback = false) {
+  if (typeof value === 'boolean') return value;
+  const text = cleanString(value).toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(text)) return true;
+  if (['0', 'false', 'no', 'off'].includes(text)) return false;
+  return fallback;
+}
+
 function cleanString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -83,6 +94,9 @@ function defaultRuntimeConfig() {
     originProbeUrl: staticConfig.envOriginProbeUrl,
     originAcceptStatusCodes: staticConfig.envOriginAcceptStatusCodes,
     protocol: normalizeProtocol(staticConfig.envProtocol),
+    edgeIpVersion: normalizeEdgeIpVersion(staticConfig.envEdgeIpVersion),
+    noTlsVerify: staticConfig.envNoTlsVerify,
+    haConnections: clampInt(staticConfig.envHaConnections, 4, 1, 16),
     heartbeatIntervalMs: staticConfig.envHeartbeatIntervalMs,
     heartbeatTimeoutMs: staticConfig.envHeartbeatTimeoutMs,
     restartFailureThreshold: staticConfig.envRestartFailureThreshold,
@@ -95,6 +109,11 @@ function defaultRuntimeConfig() {
 function normalizeProtocol(value) {
   const protocol = cleanString(value).toLowerCase();
   return ['auto', 'quic', 'http2'].includes(protocol) ? protocol : 'auto';
+}
+
+function normalizeEdgeIpVersion(value) {
+  const version = cleanString(value).toLowerCase();
+  return ['auto', '4', '6'].includes(version) ? version : 'auto';
 }
 
 function statusAccepted(status, expression = '200-299') {
@@ -119,6 +138,9 @@ function sanitizeRuntimeConfig(input, previous = runtimeConfig) {
     originProbeUrl: cleanString(input.originProbeUrl),
     originAcceptStatusCodes: cleanString(input.originAcceptStatusCodes) || '200-299',
     protocol: normalizeProtocol(input.protocol),
+    edgeIpVersion: normalizeEdgeIpVersion(input.edgeIpVersion ?? previous.edgeIpVersion),
+    noTlsVerify: toBool(input.noTlsVerify, previous.noTlsVerify || false),
+    haConnections: clampInt(input.haConnections, previous.haConnections || 4, 1, 16),
     heartbeatIntervalMs: clampInt(input.heartbeatIntervalMs, 10000, 3000, 3600000),
     heartbeatTimeoutMs: clampInt(input.heartbeatTimeoutMs, 5000, 1000, 300000),
     restartFailureThreshold: clampInt(input.restartFailureThreshold, 3, 1, 100),
@@ -162,6 +184,9 @@ function publicSettings() {
     originProbeUrl: runtimeConfig.originProbeUrl,
     originAcceptStatusCodes: runtimeConfig.originAcceptStatusCodes,
     protocol: runtimeConfig.protocol,
+    edgeIpVersion: runtimeConfig.edgeIpVersion,
+    noTlsVerify: runtimeConfig.noTlsVerify,
+    haConnections: runtimeConfig.haConnections,
     heartbeatIntervalMs: runtimeConfig.heartbeatIntervalMs,
     heartbeatTimeoutMs: runtimeConfig.heartbeatTimeoutMs,
     restartFailureThreshold: runtimeConfig.restartFailureThreshold,
@@ -263,6 +288,9 @@ function snapshot() {
       originProbeUrl: runtimeConfig.originProbeUrl || null,
       mode: runtimeConfig.tunnelToken ? 'token' : 'config/name',
       protocol: runtimeConfig.protocol,
+      edgeIpVersion: runtimeConfig.edgeIpVersion,
+      noTlsVerify: runtimeConfig.noTlsVerify,
+      haConnections: runtimeConfig.haConnections,
       manualStop
     },
     state,
@@ -284,7 +312,10 @@ function buildCloudflaredArgs() {
     `${staticConfig.metricsHost}:${staticConfig.metricsPort}`,
     ...runtimeConfig.preArgs
   ];
+  args.push('--edge-ip-version', runtimeConfig.edgeIpVersion);
+  args.push('--ha-connections', String(runtimeConfig.haConnections));
   if (runtimeConfig.protocol !== 'auto') args.push('--protocol', runtimeConfig.protocol);
+  if (runtimeConfig.noTlsVerify) args.push('--no-tls-verify');
   if (runtimeConfig.tunnelToken) {
     args.push('run', '--token', runtimeConfig.tunnelToken);
   } else {

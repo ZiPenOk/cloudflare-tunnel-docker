@@ -69,6 +69,9 @@ function render(snapshot) {
   setText('#probe-url', config.originProbeUrl || '未配置');
   setText('#accept-status', currentSettings?.originAcceptStatusCodes || '200-299');
   setText('#protocol', config.protocol || 'auto');
+  setText('#edge-ip', edgeIpName(config.edgeIpVersion));
+  setText('#ha-config', config.haConnections ?? 4);
+  setText('#tls-verify', config.noTlsVerify ? '不验证' : '验证');
   if (snapshot.settings) {
     currentSettings = snapshot.settings;
     updateSettingsBadge(snapshot.settings);
@@ -91,6 +94,14 @@ function phaseName(phase) {
     misconfigured: '未配置',
     error: '错误'
   }[phase] || phase || '--';
+}
+
+function edgeIpName(value) {
+  return {
+    auto: '自动',
+    4: 'IPv4',
+    6: 'IPv6'
+  }[value] || value || '自动';
 }
 
 function appendLog(entry) {
@@ -155,6 +166,9 @@ function renderSettings(settings) {
   updateSettingsBadge(settings);
   if (settingsDirty) return;
   $('#setting-protocol').value = settings.protocol || 'auto';
+  $('#setting-edge-ip-version').value = settings.edgeIpVersion || 'auto';
+  $('#setting-ha-connections').value = settings.haConnections || 4;
+  $('#setting-no-tls-verify').checked = Boolean(settings.noTlsVerify);
   $('#setting-probe').value = settings.originProbeUrl || '';
   $('#setting-accept-status').value = settings.originAcceptStatusCodes || '200-299';
   $('#setting-interval').value = settings.heartbeatIntervalMs || 10000;
@@ -270,6 +284,9 @@ settingsForm.addEventListener('submit', async (event) => {
     originProbeUrl: String(form.get('originProbeUrl') || '').trim(),
     originAcceptStatusCodes: String(form.get('originAcceptStatusCodes') || '200-299').trim(),
     protocol: form.get('protocol'),
+    edgeIpVersion: form.get('edgeIpVersion'),
+    noTlsVerify: $('#setting-no-tls-verify').checked,
+    haConnections: Number(form.get('haConnections')),
     heartbeatIntervalMs: Number(form.get('heartbeatIntervalMs')),
     heartbeatTimeoutMs: Number(form.get('heartbeatTimeoutMs')),
     restartFailureThreshold: Number(form.get('restartFailureThreshold')),

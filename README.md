@@ -50,6 +50,9 @@ services:
       PANEL_PORT: "18088"
       # PANEL_AUTH_TOKEN: "change-this-password"
       TUNNEL_PROTOCOL: "auto"
+      TUNNEL_EDGE_IP_VERSION: "auto"
+      TUNNEL_HA_CONNECTIONS: "4"
+      NO_TLS_VERIFY: "false"
       HEARTBEAT_INTERVAL_MS: "60000"
       HEARTBEAT_TIMEOUT_MS: "10000"
       RESTART_FAILURE_THRESHOLD: "3"
@@ -82,7 +85,7 @@ http://服务器IP:18088
 1. 登录面板。
 2. 点击 `设置`。
 3. 填入 Cloudflare Tunnel Token。
-4. 按需选择协议：`auto`、`quic`、`http2`。
+4. 按需选择协议、边缘 IP 类型、HA 连接数和后端 TLS 验证策略。
 5. 保存。
 
 也可以直接在 compose 里添加：
@@ -90,6 +93,10 @@ http://服务器IP:18088
 ```yaml
 environment:
   TUNNEL_TOKEN: "你的 Cloudflare Tunnel Token"
+  TUNNEL_PROTOCOL: "auto"
+  TUNNEL_EDGE_IP_VERSION: "auto"
+  TUNNEL_HA_CONNECTIONS: "4"
+  NO_TLS_VERIFY: "false"
 ```
 
 Web 面板保存的配置会写入：
@@ -99,6 +106,11 @@ Web 面板保存的配置会写入：
 ```
 
 Web 保存的 tunnel 和心跳配置优先于环境变量。`PANEL_PORT` 和 `PANEL_AUTH_TOKEN` 仍然只从环境变量读取。
+
+连接参数说明：
+- `TUNNEL_EDGE_IP_VERSION`：`auto`、`4`、`6`，对应自动、IPv4、IPv6。
+- `TUNNEL_HA_CONNECTIONS`：默认 `4`，用于控制 cloudflared 的 HA 连接数。
+- `NO_TLS_VERIFY`：设为 `true` 时会添加 `--no-tls-verify`，用于跳过后端服务 TLS 证书验证。
 
 ## 心跳设置建议
 

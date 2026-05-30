@@ -498,6 +498,11 @@ dd {
   height: 18px;
 }
 
+.option-row {
+  align-self: end;
+  min-height: 42px;
+}
+
 #settings-message {
   grid-column: 1 / -1;
   margin: 0;

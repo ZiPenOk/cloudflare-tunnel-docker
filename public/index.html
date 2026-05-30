@@ -91,6 +91,9 @@
             <div><dt>探测 URL</dt><dd id="probe-url">--</dd></div>
             <div><dt>接受状态码</dt><dd id="accept-status">--</dd></div>
             <div><dt>协议</dt><dd id="protocol">--</dd></div>
+            <div><dt>边缘 IP</dt><dd id="edge-ip">--</dd></div>
+            <div><dt>HA 连接数</dt><dd id="ha-config">--</dd></div>
+            <div><dt>后端 TLS</dt><dd id="tls-verify">--</dd></div>
           </dl>
         </article>
       </section>
@@ -132,6 +135,18 @@
             </select>
           </label>
           <label>
+            <span>边缘 IP 类型</span>
+            <select id="setting-edge-ip-version" name="edgeIpVersion">
+              <option value="auto">自动</option>
+              <option value="4">IPv4</option>
+              <option value="6">IPv6</option>
+            </select>
+          </label>
+          <label>
+            <span>HA 连接数</span>
+            <input id="setting-ha-connections" name="haConnections" type="number" min="1" max="16" step="1" />
+          </label>
+          <label>
             <span>外部探测 URL</span>
             <input id="setting-probe" name="originProbeUrl" type="url" placeholder="https://example.com/health" />
           </label>
@@ -158,6 +173,10 @@
           <label>
             <span>cloudflared 参数</span>
             <input id="setting-preargs" name="preArgs" type="text" placeholder="例如 --loglevel info" />
+          </label>
+          <label class="checkbox-row option-row">
+            <input id="setting-no-tls-verify" name="noTlsVerify" type="checkbox" />
+            <span>不验证后端 TLS 证书</span>
           </label>
           <div class="settings-actions">
             <label class="checkbox-row">

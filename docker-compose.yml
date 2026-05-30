@@ -13,6 +13,9 @@ services:
       # and set it later from the web panel.
       TUNNEL_TOKEN: ""
       TUNNEL_PROTOCOL: "auto" # auto, quic, http2
+      TUNNEL_EDGE_IP_VERSION: "auto" # auto, 4, 6
+      TUNNEL_HA_CONNECTIONS: "4"
+      NO_TLS_VERIFY: "false"
 
       # Optional external probe. Example:
       # ORIGIN_PROBE_URL: "https://tunnel.example.com/health"
